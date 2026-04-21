@@ -167,6 +167,249 @@
 
   </main>
 
+  <!-- ========== GAMES SECTION ========== -->
+  <section class="games-section">
+    <div class="container">
+      <h2 class="section-title">Juegos de Arte</h2>
+      <p class="games-intro">Pon a prueba tu conocimiento</p>
+
+      <div class="game-tabs">
+        <button class="game-tab active" onclick="switchGame('art',this)">🎨 Identifica la Obra</button>
+        <button class="game-tab" onclick="switchGame('arch',this)">🏛️ Identifica el Edificio</button>
+        <button class="game-tab" onclick="switchGame('trivia',this)">⭐ Trivia Arte Elite</button>
+      </div>
+
+      <!-- ART MATCHING -->
+      <div id="game-art" class="game-panel">
+        <div class="round-header">
+          <span class="round-label" id="art-round-label">Ronda 1 · Fácil</span>
+          <span class="match-score">Aciertos: <span id="art-score">0</span> / 15</span>
+        </div>
+        <p class="game-instructions">Haz clic en una obra y luego en el artista correcto.</p>
+        <div class="match-grid" id="art-images"></div>
+        <div class="match-names" id="art-names"></div>
+        <div id="art-result" class="game-result"></div>
+        <button class="game-next-round" id="art-next-btn" onclick="artNextRound()" style="display:none">Siguiente ronda →</button>
+        <button class="game-reset" onclick="initArtGame()">↺ Reiniciar</button>
+      </div>
+
+      <!-- ARCH MATCHING -->
+      <div id="game-arch" class="game-panel" style="display:none">
+        <div class="round-header">
+          <span class="round-label" id="arch-round-label">Ronda 1 · Fácil</span>
+          <span class="match-score">Aciertos: <span id="arch-score">0</span> / 15</span>
+        </div>
+        <p class="game-instructions">Haz clic en un edificio y luego en el arquitecto correcto.</p>
+        <div class="match-grid" id="arch-images"></div>
+        <div class="match-names" id="arch-names"></div>
+        <div id="arch-result" class="game-result"></div>
+        <button class="game-next-round" id="arch-next-btn" onclick="archNextRound()" style="display:none">Siguiente ronda →</button>
+        <button class="game-reset" onclick="initArchGame()">↺ Reiniciar</button>
+      </div>
+
+      <!-- TRIVIA -->
+      <div id="game-trivia" class="game-panel" style="display:none">
+        <div class="trivia-header">
+          <span>Pregunta <span id="q-num">1</span> de 15</span>
+          <span>Puntos: <span id="t-score">0</span></span>
+        </div>
+        <div class="trivia-question" id="t-question"></div>
+        <div class="trivia-options" id="t-options"></div>
+        <div class="trivia-feedback" id="t-feedback"></div>
+        <button class="game-reset" id="t-next" onclick="nextTrivia()" style="display:none">Siguiente →</button>
+        <div class="game-result" id="t-result"></div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  function switchGame(name,btn){
+    ['art','arch','trivia'].forEach(function(g){ document.getElementById('game-'+g).style.display=g===name?'block':'none'; });
+    document.querySelectorAll('.game-tab').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+  }
+  function shuffle(arr){ var a=arr.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)),t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+
+  // ── ART MATCHING — 15 paintings, 3 rounds ────────
+  var artRounds = [
+    [ // Round 1 — Fácil
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/200px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg', title:'La Noche Estrellada', artist:'Vincent van Gogh' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/150px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg', title:'La Mona Lisa', artist:'Leonardo da Vinci' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/150px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg', title:'El Grito', artist:'Edvard Munch' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/150px-1665_Girl_with_a_Pearl_Earring.jpg', title:'La Joven de la Perla', artist:'Johannes Vermeer' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg/240px-Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg', title:'La Creación de Adán', artist:'Michelangelo' }
+    ],
+    [ // Round 2 — Intermedio
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg/240px-Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg', title:'El Nacimiento de Venus', artist:'Sandro Botticelli' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg/200px-Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg', title:'Las Meninas', artist:'Diego Velázquez' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/200px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg', title:'El Beso', artist:'Gustav Klimt' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/250px-Tsunami_by_hokusai_19th_century.jpg', title:'La Gran Ola', artist:'Katsushika Hokusai' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/El_jard%C3%ADn_de_las_Delicias%2C_de_El_Bosco.jpg/200px-El_jard%C3%ADn_de_las_Delicias%2C_de_El_Bosco.jpg', title:'El Jardín de las Delicias', artist:'Hieronymus Bosch' }
+    ],
+    [ // Round 3 — Difícil
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/The_Night_Watch_-_HD.jpg/250px-The_Night_Watch_-_HD.jpg', title:'La Ronda de Noche', artist:'Rembrandt van Rijn' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Eug%C3%A8ne_Delacroix_-_La_libert%C3%A9_guidant_le_peuple.jpg/200px-Eug%C3%A8ne_Delacroix_-_La_libert%C3%A9_guidant_le_peuple.jpg', title:'La Libertad guiando al pueblo', artist:'Eugène Delacroix' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg/300px-JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg', title:'La Balsa de la Medusa', artist:'Théodore Géricault' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg/300px-A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg', title:'Un Domingo en la Grande Jatte', artist:'Georges Seurat' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Jean-Fran%C3%A7ois_Millet_-_Ang%C3%A9lus.jpg/200px-Jean-Fran%C3%A7ois_Millet_-_Ang%C3%A9lus.jpg', title:'El Ángelus', artist:'Jean-François Millet' }
+    ]
+  ];
+  var artRoundLabels=['Ronda 1 · Fácil','Ronda 2 · Intermedio','Ronda 3 · Difícil'];
+  var artRound=0, artSelected=null, artRoundScore=0, artTotalScore=0;
+
+  function initArtGame(){ artRound=0; artTotalScore=0; document.getElementById('art-score').textContent='0'; document.getElementById('art-result').textContent=''; document.getElementById('art-next-btn').style.display='none'; renderArtRound(); }
+  function renderArtRound(){
+    artSelected=null; artRoundScore=0;
+    document.getElementById('art-round-label').textContent=artRoundLabels[artRound];
+    document.getElementById('art-next-btn').style.display='none';
+    document.getElementById('art-result').textContent='';
+    var ic=document.getElementById('art-images'), nc=document.getElementById('art-names');
+    ic.innerHTML=''; nc.innerHTML='';
+    var round=artRounds[artRound];
+    shuffle(round).forEach(function(art){
+      var c=document.createElement('div'); c.className='match-card'; c.dataset.key=art.artist;
+      c.innerHTML='<img src="'+art.img+'" alt="'+art.title+'" title="'+art.title+'"><span class="card-label">'+art.title+'</span>';
+      c.onclick=function(){ if(this.classList.contains('matched')) return; document.querySelectorAll('#art-images .match-card').forEach(function(x){x.classList.remove('selected');}); this.classList.add('selected'); artSelected=this; };
+      ic.appendChild(c);
+    });
+    shuffle(round.map(function(a){return a.artist;})).forEach(function(name){
+      var b=document.createElement('button'); b.className='name-btn'; b.textContent=name; b.dataset.key=name;
+      b.onclick=function(){
+        if(!artSelected||this.classList.contains('matched')) return;
+        if(artSelected.dataset.key===this.dataset.key){
+          artSelected.classList.remove('selected'); artSelected.classList.add('matched'); this.classList.add('matched');
+          artRoundScore++; artTotalScore++; artSelected=null;
+          document.getElementById('art-score').textContent=artTotalScore;
+          if(artRoundScore===5){
+            if(artRound<2){ document.getElementById('art-result').textContent='✓ ¡Ronda completada!'; document.getElementById('art-next-btn').style.display='inline-block'; }
+            else { document.getElementById('art-result').textContent='🎉 ¡Completaste los 15! Eres un maestro del arte.'; }
+          }
+        } else {
+          var s=artSelected, bt=this; s.classList.add('wrong'); bt.classList.add('wrong');
+          setTimeout(function(){ s.classList.remove('wrong','selected'); bt.classList.remove('wrong'); artSelected=null; },800);
+        }
+      }; nc.appendChild(b);
+    });
+  }
+  function artNextRound(){ artRound++; renderArtRound(); }
+
+  // ── ARCH MATCHING — 15 buildings, 3 rounds ───────
+  var archRounds = [
+    [ // Round 1 — Fácil
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/150px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg', title:'Torre Eiffel', architect:'Gustave Eiffel' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Sagrada_Familia_01.jpg/200px-Sagrada_Familia_01.jpg', title:'Sagrada Família', architect:'Antoni Gaudí' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Sydney_Opera_House_-_Dec_2008.jpg/240px-Sydney_Opera_House_-_Dec_2008.jpg', title:'Ópera de Sídney', architect:'Jørn Utzon' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Guggenheim_museum_bilbao.jpg/240px-Guggenheim_museum_bilbao.jpg', title:'Guggenheim Bilbao', architect:'Frank Gehry' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Fallingwater_amk.jpg/240px-Fallingwater_amk.jpg', title:'Fallingwater', architect:'Frank Lloyd Wright' }
+    ],
+    [ // Round 2 — Intermedio
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Paris_-_Pompidou_Center_%28cropped%29.jpg/200px-Paris_-_Pompidou_Center_%28cropped%29.jpg', title:'Centro Pompidou', architect:'Renzo Piano' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Guggenheim_museum_exterior.jpg/200px-Guggenheim_museum_exterior.jpg', title:'Guggenheim Nueva York', architect:'Frank Lloyd Wright' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Villa_Savoye_2012.jpg/240px-Villa_Savoye_2012.jpg', title:'Villa Savoye', architect:'Le Corbusier' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Casa_Batll%C3%B3_in_Barcelona_2009.jpg/200px-Casa_Batll%C3%B3_in_Barcelona_2009.jpg', title:'Casa Batlló', architect:'Antoni Gaudí' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Barcelona_Pavilion_2.jpg/240px-Barcelona_Pavilion_2.jpg', title:'Pabellón de Barcelona', architect:'Mies van der Rohe' }
+    ],
+    [ // Round 3 — Difícil
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/TWA_Flight_Center%2C_JFK%2C_2005.jpg/240px-TWA_Flight_Center%2C_JFK%2C_2005.jpg', title:'Terminal TWA', architect:'Eero Saarinen' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Farnsworth_House_by_Mies_Van_Der_Rohe_-_exterior-Edit.jpg/240px-Farnsworth_House_by_Mies_Van_Der_Rohe_-_exterior-Edit.jpg', title:'Casa Farnsworth', architect:'Mies van der Rohe' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/SeagramBuilding_oct79.jpg/150px-SeagramBuilding_oct79.jpg', title:'Edificio Seagram', architect:'Philip Johnson' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/MAXXI_museum%2C_Rome_-_9.jpg/240px-MAXXI_museum%2C_Rome_-_9.jpg', title:'Museo MAXXI Roma', architect:'Zaha Hadid' },
+      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Schroderhouse.jpg/240px-Schroderhouse.jpg', title:'Casa Schröder', architect:'Gerrit Rietveld' }
+    ]
+  ];
+  var archRoundLabels=['Ronda 1 · Fácil','Ronda 2 · Intermedio','Ronda 3 · Difícil'];
+  var archRound=0, archSelected=null, archRoundScore=0, archTotalScore=0;
+
+  function initArchGame(){ archRound=0; archTotalScore=0; document.getElementById('arch-score').textContent='0'; document.getElementById('arch-result').textContent=''; document.getElementById('arch-next-btn').style.display='none'; renderArchRound(); }
+  function renderArchRound(){
+    archSelected=null; archRoundScore=0;
+    document.getElementById('arch-round-label').textContent=archRoundLabels[archRound];
+    document.getElementById('arch-next-btn').style.display='none';
+    document.getElementById('arch-result').textContent='';
+    var ic=document.getElementById('arch-images'), nc=document.getElementById('arch-names');
+    ic.innerHTML=''; nc.innerHTML='';
+    var round=archRounds[archRound];
+    shuffle(round).forEach(function(arch){
+      var c=document.createElement('div'); c.className='match-card'; c.dataset.key=arch.architect;
+      c.innerHTML='<img src="'+arch.img+'" alt="'+arch.title+'" title="'+arch.title+'"><span class="card-label">'+arch.title+'</span>';
+      c.onclick=function(){ if(this.classList.contains('matched')) return; document.querySelectorAll('#arch-images .match-card').forEach(function(x){x.classList.remove('selected');}); this.classList.add('selected'); archSelected=this; };
+      ic.appendChild(c);
+    });
+    shuffle(round.map(function(a){return a.architect;})).forEach(function(name){
+      var b=document.createElement('button'); b.className='name-btn'; b.textContent=name; b.dataset.key=name;
+      b.onclick=function(){
+        if(!archSelected||this.classList.contains('matched')) return;
+        if(archSelected.dataset.key===this.dataset.key){
+          archSelected.classList.remove('selected'); archSelected.classList.add('matched'); this.classList.add('matched');
+          archRoundScore++; archTotalScore++; archSelected=null;
+          document.getElementById('arch-score').textContent=archTotalScore;
+          if(archRoundScore===5){
+            if(archRound<2){ document.getElementById('arch-result').textContent='✓ ¡Ronda completada!'; document.getElementById('arch-next-btn').style.display='inline-block'; }
+            else { document.getElementById('arch-result').textContent='🏆 ¡Completaste los 15! Conoces la arquitectura del mundo.'; }
+          }
+        } else {
+          var s=archSelected, bt=this; s.classList.add('wrong'); bt.classList.add('wrong');
+          setTimeout(function(){ s.classList.remove('wrong','selected'); bt.classList.remove('wrong'); archSelected=null; },800);
+        }
+      }; nc.appendChild(b);
+    });
+  }
+  function archNextRound(){ archRound++; renderArchRound(); }
+
+  // ── ELITE ART TRIVIA — 15 questions ──────────────
+  var triviaData = [
+    // Easy
+    { q:'¿Quién pintó La Noche Estrellada?', opts:['Claude Monet','Paul Gauguin','Vincent van Gogh','Paul Cézanne'], ans:2, fact:'Van Gogh pintó La Noche Estrellada en junio de 1889 desde la habitación del asilo de Saint-Paul-de-Mausole.' },
+    { q:'¿En qué museo se encuentra la Mona Lisa?', opts:['El Prado','El Louvre','El Hermitage','Los Uffizi'], ans:1, fact:'La Mona Lisa ha estado en el Louvre de París desde 1797, y es la pintura más visitada del mundo.' },
+    { q:'¿Qué artista cortó parte de su propia oreja?', opts:['Paul Gauguin','Toulouse-Lautrec','Vincent van Gogh','Georges Seurat'], ans:2, fact:'Van Gogh se cortó la oreja en diciembre de 1888 tras una pelea con Gauguin en Arlés, Francia.' },
+    { q:'¿De qué material está esculpido el David de Michelangelo?', opts:['Bronce','Granito','Mármol de Carrara','Travertino'], ans:2, fact:'Michelangelo tardó dos años (1501-1504) en esculpir el David de un bloque de mármol blanco de Carrara.' },
+    { q:'¿Quién pintó el techo de la Capilla Sixtina?', opts:['Rafael','Leonardo da Vinci','Michelangelo','Donatello'], ans:2, fact:'Michelangelo pintó el techo entre 1508 y 1512 por encargo del Papa Julio II.' },
+    // Medium
+    { q:'El Guernica de Picasso fue pintado en respuesta a:', opts:['La Primera Guerra Mundial','El bombardeo de la ciudad vasca de Guernica','La Revolución Francesa','La Segunda Guerra Mundial'], ans:1, fact:'El bombardeo aéreo de Guernica el 26 de abril de 1937, durante la Guerra Civil Española, inspiró esta obra.' },
+    { q:'¿Qué técnica consiste en aplicar pintura espesa sobre el lienzo creando relieve?', opts:['Sfumato','Chiaroscuro','Fresco','Impasto'], ans:3, fact:'El impasto fue usado magistralmente por Van Gogh y Rembrandt para añadir textura y energía a sus obras.' },
+    { q:'"Un domingo en la Grande Jatte" de Seurat ejemplifica la técnica del:', opts:['Impasto','Sfumato','Puntillismo','Fresco'], ans:2, fact:'El puntillismo usa pequeños puntos de color puro que el ojo mezcla ópticamente a distancia.' },
+    { q:'La técnica del sfumato, asociada a Da Vinci, se refiere a:', opts:['Contornos nítidos y precisos','Transiciones suaves y brumosas entre tonos','El uso de colores primarios puros','La aplicación de pan de oro'], ans:1, fact:'Sfumato en italiano significa "evaporado". Da Vinci lo usó magistralmente en la Mona Lisa y la Virgen de las Rocas.' },
+    { q:'¿Quién pintó "Las Meninas" en 1656?', opts:['Francisco Goya','El Greco','Diego Velázquez','Bartolomé Murillo'], ans:2, fact:'Las Meninas de Velázquez es considerada una de las obras más complejas de la historia del arte occidental.' },
+    // Hard
+    { q:'¿Qué movimiento artístico fundó Kandinsky junto a Franz Marc en 1911?', opts:['Cubismo','Fauvismo','Suprematismo','Der Blaue Reiter'], ans:3, fact:'El Jinete Azul (Der Blaue Reiter) fue fundado en Múnich y fue clave en el desarrollo del expresionismo abstracto.' },
+    { q:'¿Cuál de estos artistas fue conocido por su técnica de "drip painting"?', opts:['Mark Rothko','Franz Kline','Jackson Pollock','Willem de Kooning'], ans:2, fact:'Pollock colocaba el lienzo en el suelo y dejaba caer la pintura desde arriba, revolucionando el arte abstracto.' },
+    { q:'¿Qué artista pintó "La Persistencia de la Memoria" con los famosos relojes derretidos?', opts:['René Magritte','Max Ernst','Giorgio de Chirico','Salvador Dalí'], ans:3, fact:'Dalí pintó esta obra surrealista en 1931. Dijo que la idea le vino contemplando un queso camembert al sol.' },
+    { q:'¿En qué año fue fundado el MoMA de Nueva York?', opts:['1919','1929','1939','1945'], ans:1, fact:'El MoMA (Museum of Modern Art) fue fundado en 1929 y es uno de los museos de arte moderno más influyentes del mundo.' },
+    { q:'¿Qué artista japonés creó la serie "Treinta y seis vistas del Monte Fuji"?', opts:['Hiroshige','Utamaro','Hokusai','Kuniyoshi'], ans:2, fact:'Hokusai (1760-1849) creó esta serie ukiyo-e entre 1830 y 1832. La Gran Ola es su obra más célebre.' }
+  ];
+  var tIndex=0, tScore=0, tAnswered=false;
+  function initTriviaGame(){ tIndex=0; tScore=0; tAnswered=false; document.getElementById('t-result').textContent=''; renderTrivia(); }
+  function renderTrivia(){
+    if(tIndex>=triviaData.length){
+      document.getElementById('t-question').textContent=''; document.getElementById('t-options').innerHTML='';
+      document.getElementById('t-feedback').textContent=''; document.getElementById('t-next').style.display='none';
+      var pct=Math.round((tScore/triviaData.length)*100);
+      var msg=pct===100?'🏆 ¡Maestro Absoluto! Puntuación perfecta.':pct>=80?'🎨 ¡Excelente! Eres un verdadero conocedor.':pct>=60?'📚 Muy bien. Sigue aprendiendo.':'🖌️ Sigue explorando el mundo del arte.';
+      document.getElementById('t-result').innerHTML='<strong>'+msg+'</strong><br>Puntuación final: '+tScore+'/15<br><button class="game-reset" onclick="initTriviaGame()" style="margin-top:12px">↺ Jugar de nuevo</button>';
+      return;
+    }
+    var q=triviaData[tIndex]; tAnswered=false;
+    document.getElementById('q-num').textContent=tIndex+1;
+    document.getElementById('t-score').textContent=tScore;
+    document.getElementById('t-question').textContent=q.q;
+    document.getElementById('t-feedback').innerHTML=''; document.getElementById('t-feedback').className='trivia-feedback';
+    document.getElementById('t-next').style.display='none'; document.getElementById('t-result').textContent='';
+    var op=document.getElementById('t-options'); op.innerHTML='';
+    q.opts.forEach(function(opt,i){ var b=document.createElement('button'); b.className='trivia-opt'; b.textContent=opt; b.onclick=function(){ answerTrivia(i,b); }; op.appendChild(b); });
+  }
+  function answerTrivia(idx,btn){
+    if(tAnswered) return; tAnswered=true;
+    var q=triviaData[tIndex];
+    document.querySelectorAll('.trivia-opt')[q.ans].classList.add('correct');
+    if(idx===q.ans){ btn.classList.add('correct'); tScore++; document.getElementById('t-score').textContent=tScore; document.getElementById('t-feedback').innerHTML='✓ ¡Correcto! <em>'+q.fact+'</em>'; document.getElementById('t-feedback').className='trivia-feedback correct'; }
+    else { btn.classList.add('wrong'); document.getElementById('t-feedback').innerHTML='✗ Incorrecto. <em>'+q.fact+'</em>'; document.getElementById('t-feedback').className='trivia-feedback wrong'; }
+    document.getElementById('t-next').style.display='inline-block';
+  }
+  function nextTrivia(){ tIndex++; renderTrivia(); }
+
+  initArtGame(); initArchGame(); initTriviaGame();
+  </script>
+
   <footer>
     © El Post Pandémico · José A. Peláez, editor · Abril 2026
     <br />
