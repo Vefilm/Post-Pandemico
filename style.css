@@ -80,35 +80,38 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 /* ---------- Google Translate ---------- */
-#google_translate_element {
+#google_translate_element { display: none; }
+.goog-te-banner-frame { display: none !important; }
+body { top: 0 !important; }
+
+.translate-wrap {
   position: absolute;
   top: 14px;
   right: 18px;
-  font-family: var(--sans);
-  font-size: 11px;
 }
-#google_translate_element .goog-te-gadget-simple {
+.translate-select {
+  appearance: none;
+  -webkit-appearance: none;
   background: transparent;
   border: 1px solid var(--rule);
-  border-radius: 3px;
-  padding: 3px 7px;
-  font-size: 11px;
+  border-radius: 2px;
+  padding: 4px 22px 4px 8px;
   font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--ink-fade);
   cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a7a64'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 7px center;
+  background-color: var(--paper);
 }
-#google_translate_element .goog-te-gadget-simple:hover {
+.translate-select:hover {
   border-color: var(--ink-fade);
   color: var(--ink);
 }
-#google_translate_element .goog-te-gadget-simple span,
-#google_translate_element .goog-te-gadget-simple a {
-  font-size: 11px !important;
-  color: var(--ink-fade) !important;
-  text-decoration: none !important;
-}
-.goog-te-banner-frame { display: none !important; }
-body { top: 0 !important; }
+.translate-select:focus { outline: none; }
 
 /* ---------- Container ---------- */
 .container {
