@@ -79,6 +79,37 @@ img { max-width: 100%; height: auto; display: block; }
   margin-top: 10px;
 }
 
+/* ---------- Google Translate ---------- */
+#google_translate_element {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-family: var(--sans);
+  font-size: 11px;
+}
+#google_translate_element .goog-te-gadget-simple {
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 3px 7px;
+  font-size: 11px;
+  font-family: var(--sans);
+  color: var(--ink-fade);
+  cursor: pointer;
+}
+#google_translate_element .goog-te-gadget-simple:hover {
+  border-color: var(--ink-fade);
+  color: var(--ink);
+}
+#google_translate_element .goog-te-gadget-simple span,
+#google_translate_element .goog-te-gadget-simple a {
+  font-size: 11px !important;
+  color: var(--ink-fade) !important;
+  text-decoration: none !important;
+}
+.goog-te-banner-frame { display: none !important; }
+body { top: 0 !important; }
+
 /* ---------- Container ---------- */
 .container {
   max-width: var(--maxw);
