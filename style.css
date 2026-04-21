@@ -951,6 +951,97 @@ footer .pdf-link {
 }
 footer .pdf-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
+/* ---------- Music Player ---------- */
+.music-player {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 999;
+  background: #0e0a05;
+  border: 1px solid rgba(184,136,42,0.35);
+  border-radius: 4px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.55);
+  transition: all 0.3s ease;
+  min-width: 280px;
+}
+.music-player.collapsed .music-player-bar {
+  padding: 8px 14px;
+}
+.music-player.collapsed .music-info { display: none; }
+.music-player.collapsed .music-prev,
+.music-player.collapsed .music-next { display: none; }
+.music-player-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+}
+.music-play, .music-prev, .music-next, .music-collapse {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255,255,255,0.6);
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 2px;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+.music-play {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(184,136,42,0.4);
+  border-radius: 50%;
+  font-size: 11px;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.music-play:hover { background: var(--gold); color: #0e0a05; border-color: var(--gold); }
+.music-prev:hover, .music-next:hover { color: var(--gold); }
+.music-collapse { color: rgba(255,255,255,0.3); font-size: 13px; margin-left: auto; }
+.music-collapse:hover { color: rgba(255,255,255,0.7); }
+.music-info {
+  flex: 1;
+  min-width: 0;
+}
+.music-track-name {
+  display: block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 5px;
+  letter-spacing: 0.02em;
+}
+.music-progress-wrap {
+  height: 2px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.music-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--gold);
+  border-radius: 1px;
+  transition: width 0.5s linear;
+}
+.music-player.playing .music-track-name {
+  color: #fff;
+}
+.music-player.playing .music-progress-fill {
+  background: var(--gold);
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 /* ---------- Mobile ---------- */
 @media (max-width: 640px) {
   body { font-size: 17px; }

@@ -426,6 +426,83 @@
   initArtGame(); initArchGame(); initTriviaGame();
   </script>
 
+  <!-- ========== MUSIC PLAYER ========== -->
+  <div class="music-player" id="musicPlayer">
+    <div class="music-player-bar">
+      <button class="music-prev" onclick="prevTrack()" title="Anterior">&#9664;</button>
+      <button class="music-play" id="playBtn" onclick="togglePlay()" title="Reproducir">&#9654;</button>
+      <button class="music-next" onclick="nextTrack()" title="Siguiente">&#9654;&#9654;</button>
+      <div class="music-info">
+        <span class="music-track-name" id="musicTitle">♪ Música clásica</span>
+        <div class="music-progress-wrap">
+          <div class="music-progress-fill" id="musicProgress"></div>
+        </div>
+      </div>
+      <button class="music-collapse" onclick="togglePlayer()" id="collapseBtn" title="Minimizar">▾</button>
+    </div>
+    <audio id="musicAudio" onended="nextTrack()" ontimeupdate="updateProgress()"></audio>
+  </div>
+
+  <script>
+  var WA = 'https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/';
+  var tracks = [
+    { title: 'Clair de Lune', composer: 'Debussy', file: 'Debussy_Clair_de_Lune.ogg' },
+    { title: 'Nocturno Op. 9 Nº 2', composer: 'Chopin', file: 'Chopin_-_Nocturne_op9_No2.ogg' },
+    { title: 'Sonata Claro de Luna', composer: 'Beethoven', file: 'Moonlight_Sonata_Beethoven.ogg' },
+    { title: 'Fuga en Sol menor', composer: 'Bach', file: 'Bach_BWV578.ogg' }
+  ];
+  var currentTrack = 0;
+  var isPlaying = false;
+  var audio = document.getElementById('musicAudio');
+  var playBtn = document.getElementById('playBtn');
+
+  function loadTrack(idx) {
+    currentTrack = (idx + tracks.length) % tracks.length;
+    var t = tracks[currentTrack];
+    audio.src = WA + t.file;
+    document.getElementById('musicTitle').textContent = t.title + '  ·  ' + t.composer;
+    document.getElementById('musicProgress').style.width = '0%';
+  }
+
+  function togglePlay() {
+    if (!audio.src || audio.src === window.location.href) loadTrack(0);
+    if (isPlaying) {
+      audio.pause();
+      playBtn.innerHTML = '&#9654;';
+      isPlaying = false;
+      document.getElementById('musicPlayer').classList.remove('playing');
+    } else {
+      audio.play().catch(function(){});
+      playBtn.innerHTML = '&#9646;&#9646;';
+      isPlaying = true;
+      document.getElementById('musicPlayer').classList.add('playing');
+    }
+  }
+
+  function nextTrack() {
+    loadTrack(currentTrack + 1);
+    if (isPlaying) audio.play().catch(function(){});
+  }
+
+  function prevTrack() {
+    loadTrack(currentTrack - 1);
+    if (isPlaying) audio.play().catch(function(){});
+  }
+
+  function updateProgress() {
+    if (audio.duration) {
+      document.getElementById('musicProgress').style.width = (audio.currentTime / audio.duration * 100) + '%';
+    }
+  }
+
+  function togglePlayer() {
+    var p = document.getElementById('musicPlayer');
+    var btn = document.getElementById('collapseBtn');
+    p.classList.toggle('collapsed');
+    btn.textContent = p.classList.contains('collapsed') ? '▸' : '▾';
+  }
+  </script>
+
   <footer>
     © El Post Pandémico · José A. Peláez, editor · Abril 2026
     <br />
