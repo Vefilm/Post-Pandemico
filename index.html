@@ -208,16 +208,26 @@
       </div>
 
       <!-- TRIVIA -->
-      <div id="game-trivia" class="game-panel" style="display:none">
-        <div class="trivia-header">
-          <span>Pregunta <span id="q-num">1</span> de 15</span>
-          <span>Puntos: <span id="t-score">0</span></span>
+      <div id="game-trivia" class="game-panel trivia-panel" style="display:none">
+        <div class="trivia-hero-wrap">
+          <img class="trivia-hero-img" src="https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/CAPPELLA_SISTINA_Ceiling.jpg&width=900" alt="Capilla Sixtina" onerror="this.src='https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/Louvre_2007_02_17c.jpg&width=900'">
+          <div class="trivia-hero-overlay">
+            <div class="trivia-hero-badge">⭐ Trivia Arte Elite</div>
+            <div class="trivia-hero-sub">15 preguntas · De fácil a experto</div>
+          </div>
         </div>
-        <div class="trivia-question" id="t-question"></div>
-        <div class="trivia-options" id="t-options"></div>
-        <div class="trivia-feedback" id="t-feedback"></div>
-        <button class="game-reset" id="t-next" onclick="nextTrivia()" style="display:none">Siguiente →</button>
-        <div class="game-result" id="t-result"></div>
+        <div class="trivia-body">
+          <div class="trivia-progress-row">
+            <span class="trivia-prog-label">Pregunta <span id="q-num">1</span> de 15</span>
+            <span class="trivia-pts-label">Puntos: <span id="t-score">0</span></span>
+          </div>
+          <div class="trivia-progress-bar"><div class="trivia-progress-fill" id="t-progress" style="width:0%"></div></div>
+          <div class="trivia-question" id="t-question"></div>
+          <div class="trivia-options" id="t-options"></div>
+          <div class="trivia-feedback" id="t-feedback"></div>
+          <button class="trivia-next-btn" id="t-next" onclick="nextTrivia()" style="display:none">Siguiente pregunta →</button>
+          <div class="game-result" id="t-result"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -231,27 +241,28 @@
   function shuffle(arr){ var a=arr.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)),t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 
   // ── ART MATCHING — 15 paintings, 3 rounds ────────
+  var W = 'https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/';
   var artRounds = [
     [ // Round 1 — Fácil
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/200px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg', title:'La Noche Estrellada', artist:'Vincent van Gogh' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/150px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg', title:'La Mona Lisa', artist:'Leonardo da Vinci' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/150px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg', title:'El Grito', artist:'Edvard Munch' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/150px-1665_Girl_with_a_Pearl_Earring.jpg', title:'La Joven de la Perla', artist:'Johannes Vermeer' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg/240px-Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg', title:'La Creación de Adán', artist:'Michelangelo' }
+      { img:W+'Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg&width=300', title:'La Noche Estrellada', artist:'Vincent van Gogh' },
+      { img:W+'Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg&width=220', title:'La Mona Lisa', artist:'Leonardo da Vinci' },
+      { img:W+'Edvard_Munch,_1893,_The_Scream,_oil,_tempera_and_pastel_on_cardboard,_91_x_73_cm,_National_Gallery_of_Norway.jpg&width=220', title:'El Grito', artist:'Edvard Munch' },
+      { img:W+'1665_Girl_with_a_Pearl_Earring.jpg&width=220', title:'La Joven de la Perla', artist:'Johannes Vermeer' },
+      { img:W+'Michelangelo_-_Creation_of_Adam_(cropped).jpg&width=300', title:'La Creación de Adán', artist:'Michelangelo' }
     ],
     [ // Round 2 — Intermedio
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg/240px-Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg', title:'El Nacimiento de Venus', artist:'Sandro Botticelli' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg/200px-Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg', title:'Las Meninas', artist:'Diego Velázquez' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/200px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg', title:'El Beso', artist:'Gustav Klimt' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/250px-Tsunami_by_hokusai_19th_century.jpg', title:'La Gran Ola', artist:'Katsushika Hokusai' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/El_jard%C3%ADn_de_las_Delicias%2C_de_El_Bosco.jpg/200px-El_jard%C3%ADn_de_las_Delicias%2C_de_El_Bosco.jpg', title:'El Jardín de las Delicias', artist:'Hieronymus Bosch' }
+      { img:W+'Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg&width=300', title:'El Nacimiento de Venus', artist:'Sandro Botticelli' },
+      { img:W+'Las_Meninas,_by_Diego_Velázquez,_from_Prado_in_Google_Earth.jpg&width=220', title:'Las Meninas', artist:'Diego Velázquez' },
+      { img:W+'The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg&width=220', title:'El Beso', artist:'Gustav Klimt' },
+      { img:W+'Tsunami_by_hokusai_19th_century.jpg&width=300', title:'La Gran Ola', artist:'Katsushika Hokusai' },
+      { img:W+'El_jardín_de_las_Delicias,_de_El_Bosco.jpg&width=300', title:'El Jardín de las Delicias', artist:'Hieronymus Bosch' }
     ],
     [ // Round 3 — Difícil
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/The_Night_Watch_-_HD.jpg/250px-The_Night_Watch_-_HD.jpg', title:'La Ronda de Noche', artist:'Rembrandt van Rijn' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Eug%C3%A8ne_Delacroix_-_La_libert%C3%A9_guidant_le_peuple.jpg/200px-Eug%C3%A8ne_Delacroix_-_La_libert%C3%A9_guidant_le_peuple.jpg', title:'La Libertad guiando al pueblo', artist:'Eugène Delacroix' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg/300px-JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg', title:'La Balsa de la Medusa', artist:'Théodore Géricault' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg/300px-A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg', title:'Un Domingo en la Grande Jatte', artist:'Georges Seurat' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Jean-Fran%C3%A7ois_Millet_-_Ang%C3%A9lus.jpg/200px-Jean-Fran%C3%A7ois_Millet_-_Ang%C3%A9lus.jpg', title:'El Ángelus', artist:'Jean-François Millet' }
+      { img:W+'The_Night_Watch_-_HD.jpg&width=300', title:'La Ronda de Noche', artist:'Rembrandt van Rijn' },
+      { img:W+'Eugène_Delacroix_-_La_liberté_guidant_le_peuple.jpg&width=300', title:'La Libertad guiando al pueblo', artist:'Eugène Delacroix' },
+      { img:W+'Théodore_Géricault_-_Le_Radeau_de_la_Méduse.jpg&width=300', title:'La Balsa de la Medusa', artist:'Théodore Géricault' },
+      { img:W+'A_Sunday_on_La_Grande_Jatte,_Georges_Seurat,_1884.jpg&width=300', title:'Un Domingo en la Grande Jatte', artist:'Georges Seurat' },
+      { img:W+'Jean-François_Millet_-_Angélus.jpg&width=220', title:'El Ángelus', artist:'Jean-François Millet' }
     ]
   ];
   var artRoundLabels=['Ronda 1 · Fácil','Ronda 2 · Intermedio','Ronda 3 · Difícil'];
@@ -296,25 +307,25 @@
   // ── ARCH MATCHING — 15 buildings, 3 rounds ───────
   var archRounds = [
     [ // Round 1 — Fácil
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/150px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg', title:'Torre Eiffel', architect:'Gustave Eiffel' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Sagrada_Familia_01.jpg/200px-Sagrada_Familia_01.jpg', title:'Sagrada Família', architect:'Antoni Gaudí' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Sydney_Opera_House_-_Dec_2008.jpg/240px-Sydney_Opera_House_-_Dec_2008.jpg', title:'Ópera de Sídney', architect:'Jørn Utzon' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Guggenheim_museum_bilbao.jpg/240px-Guggenheim_museum_bilbao.jpg', title:'Guggenheim Bilbao', architect:'Frank Gehry' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Fallingwater_amk.jpg/240px-Fallingwater_amk.jpg', title:'Fallingwater', architect:'Frank Lloyd Wright' }
+      { img:W+'Tour_Eiffel_Wikimedia_Commons_(cropped).jpg&width=220', title:'Torre Eiffel', architect:'Gustave Eiffel' },
+      { img:W+'Sagrada_Familia_01.jpg&width=260', title:'Sagrada Família', architect:'Antoni Gaudí' },
+      { img:W+'Sydney_Opera_House_-_Dec_2008.jpg&width=300', title:'Ópera de Sídney', architect:'Jørn Utzon' },
+      { img:W+'Guggenheim_museum_bilbao.jpg&width=300', title:'Guggenheim Bilbao', architect:'Frank Gehry' },
+      { img:W+'Fallingwater_amk.jpg&width=300', title:'Fallingwater', architect:'Frank Lloyd Wright' }
     ],
     [ // Round 2 — Intermedio
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Paris_-_Pompidou_Center_%28cropped%29.jpg/200px-Paris_-_Pompidou_Center_%28cropped%29.jpg', title:'Centro Pompidou', architect:'Renzo Piano' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Guggenheim_museum_exterior.jpg/200px-Guggenheim_museum_exterior.jpg', title:'Guggenheim Nueva York', architect:'Frank Lloyd Wright' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Villa_Savoye_2012.jpg/240px-Villa_Savoye_2012.jpg', title:'Villa Savoye', architect:'Le Corbusier' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Casa_Batll%C3%B3_in_Barcelona_2009.jpg/200px-Casa_Batll%C3%B3_in_Barcelona_2009.jpg', title:'Casa Batlló', architect:'Antoni Gaudí' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Barcelona_Pavilion_2.jpg/240px-Barcelona_Pavilion_2.jpg', title:'Pabellón de Barcelona', architect:'Mies van der Rohe' }
+      { img:W+'Paris_-_Pompidou_Center_(cropped).jpg&width=300', title:'Centro Pompidou', architect:'Renzo Piano' },
+      { img:W+'Guggenheim_museum_exterior.jpg&width=300', title:'Guggenheim Nueva York', architect:'Frank Lloyd Wright' },
+      { img:W+'Villa_Savoye_2012.jpg&width=300', title:'Villa Savoye', architect:'Le Corbusier' },
+      { img:W+'Casa_Batlló_in_Barcelona_2009.jpg&width=260', title:'Casa Batlló', architect:'Antoni Gaudí' },
+      { img:W+'Barcelona_Pavilion_2.jpg&width=300', title:'Pabellón de Barcelona', architect:'Mies van der Rohe' }
     ],
     [ // Round 3 — Difícil
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/TWA_Flight_Center%2C_JFK%2C_2005.jpg/240px-TWA_Flight_Center%2C_JFK%2C_2005.jpg', title:'Terminal TWA', architect:'Eero Saarinen' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Farnsworth_House_by_Mies_Van_Der_Rohe_-_exterior-Edit.jpg/240px-Farnsworth_House_by_Mies_Van_Der_Rohe_-_exterior-Edit.jpg', title:'Casa Farnsworth', architect:'Mies van der Rohe' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/SeagramBuilding_oct79.jpg/150px-SeagramBuilding_oct79.jpg', title:'Edificio Seagram', architect:'Philip Johnson' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/MAXXI_museum%2C_Rome_-_9.jpg/240px-MAXXI_museum%2C_Rome_-_9.jpg', title:'Museo MAXXI Roma', architect:'Zaha Hadid' },
-      { img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Schroderhouse.jpg/240px-Schroderhouse.jpg', title:'Casa Schröder', architect:'Gerrit Rietveld' }
+      { img:W+'TWA_Flight_Center,_JFK,_2005.jpg&width=300', title:'Terminal TWA', architect:'Eero Saarinen' },
+      { img:W+'Farnsworth_House_by_Mies_Van_Der_Rohe_-_exterior-Edit.jpg&width=300', title:'Casa Farnsworth', architect:'Mies van der Rohe' },
+      { img:W+'SeagramBuilding_oct79.jpg&width=220', title:'Edificio Seagram', architect:'Philip Johnson' },
+      { img:W+'MAXXI_museum,_Rome_-_9.jpg&width=300', title:'Museo MAXXI Roma', architect:'Zaha Hadid' },
+      { img:W+'Schroderhouse.jpg&width=300', title:'Casa Schröder', architect:'Gerrit Rietveld' }
     ]
   ];
   var archRoundLabels=['Ronda 1 · Fácil','Ronda 2 · Intermedio','Ronda 3 · Difícil'];
@@ -380,12 +391,15 @@
   var tIndex=0, tScore=0, tAnswered=false;
   function initTriviaGame(){ tIndex=0; tScore=0; tAnswered=false; document.getElementById('t-result').textContent=''; renderTrivia(); }
   function renderTrivia(){
+    var prog=Math.round((tIndex/triviaData.length)*100);
+    document.getElementById('t-progress').style.width=prog+'%';
     if(tIndex>=triviaData.length){
+      document.getElementById('t-progress').style.width='100%';
       document.getElementById('t-question').textContent=''; document.getElementById('t-options').innerHTML='';
       document.getElementById('t-feedback').textContent=''; document.getElementById('t-next').style.display='none';
       var pct=Math.round((tScore/triviaData.length)*100);
       var msg=pct===100?'🏆 ¡Maestro Absoluto! Puntuación perfecta.':pct>=80?'🎨 ¡Excelente! Eres un verdadero conocedor.':pct>=60?'📚 Muy bien. Sigue aprendiendo.':'🖌️ Sigue explorando el mundo del arte.';
-      document.getElementById('t-result').innerHTML='<strong>'+msg+'</strong><br>Puntuación final: '+tScore+'/15<br><button class="game-reset" onclick="initTriviaGame()" style="margin-top:12px">↺ Jugar de nuevo</button>';
+      document.getElementById('t-result').innerHTML='<div class="trivia-final"><div class="trivia-final-msg">'+msg+'</div><div class="trivia-final-score">'+tScore+' / 15</div><button class="trivia-next-btn" onclick="initTriviaGame()" style="margin-top:20px">↺ Jugar de nuevo</button></div>';
       return;
     }
     var q=triviaData[tIndex]; tAnswered=false;
