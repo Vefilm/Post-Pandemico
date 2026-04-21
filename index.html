@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" translate="no">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,6 +19,7 @@
     <div class="translate-wrap">
       <select class="translate-select" onchange="doTranslate(this.value)">
         <option value="">🌐 Idioma</option>
+        <option value="es">Español</option>
         <option value="en">English</option>
         <option value="fr">Français</option>
         <option value="de">Deutsch</option>
@@ -38,6 +39,12 @@
     }
     function doTranslate(lang) {
       if (!lang) return;
+      if (lang === 'es') {
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + location.hostname;
+        window.location.reload();
+        return;
+      }
       var sel = document.querySelector('.goog-te-combo');
       if (sel) {
         sel.style.display = 'block';
