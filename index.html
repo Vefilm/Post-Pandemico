@@ -434,22 +434,26 @@
       <button class="music-next" onclick="nextTrack()" title="Siguiente">&#9654;&#9654;</button>
       <div class="music-info">
         <span class="music-track-name" id="musicTitle">♪ Música clásica</span>
+        <span class="music-composer" id="musicComposer">—</span>
         <div class="music-progress-wrap">
           <div class="music-progress-fill" id="musicProgress"></div>
         </div>
       </div>
-      <button class="music-collapse" onclick="togglePlayer()" id="collapseBtn" title="Minimizar">▾</button>
+      <button class="music-collapse" onclick="togglePlayer()" id="collapseBtn" title="Minimizar">✕</button>
     </div>
     <audio id="musicAudio" onended="nextTrack()" ontimeupdate="updateProgress()"></audio>
   </div>
 
   <script>
-  var WA = 'https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/';
   var tracks = [
-    { title: 'Clair de Lune', composer: 'Debussy', file: 'Debussy_Clair_de_Lune.ogg' },
-    { title: 'Nocturno Op. 9 Nº 2', composer: 'Chopin', file: 'Chopin_-_Nocturne_op9_No2.ogg' },
-    { title: 'Sonata Claro de Luna', composer: 'Beethoven', file: 'Moonlight_Sonata_Beethoven.ogg' },
-    { title: 'Fuga en Sol menor', composer: 'Bach', file: 'Bach_BWV578.ogg' }
+    { title: 'Clair de Lune', composer: 'Debussy',
+      url: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Clair_de_lune_%28Claude_Debussy%29_Suite_bergamasque.ogg' },
+    { title: 'Nocturno en Do# menor', composer: 'Chopin',
+      url: 'https://upload.wikimedia.org/wikipedia/commons/1/12/Chopin%2C_Nocturne_in_C-sharp_minor%2C_Op._Posth.ogg' },
+    { title: 'Sonata Claro de Luna', composer: 'Beethoven',
+      url: 'https://upload.wikimedia.org/wikipedia/commons/9/96/Beethoven_Moonlight_sonata_sequenced.ogg' },
+    { title: 'Preludio Suite Inglesa Nº 3', composer: 'Bach',
+      url: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/English_Suites_No.3_Prelude_Xue_Meng_Hu.ogg' }
   ];
   var currentTrack = 0;
   var isPlaying = false;
@@ -459,8 +463,9 @@
   function loadTrack(idx) {
     currentTrack = (idx + tracks.length) % tracks.length;
     var t = tracks[currentTrack];
-    audio.src = WA + t.file;
-    document.getElementById('musicTitle').textContent = t.title + '  ·  ' + t.composer;
+    audio.src = t.url;
+    document.getElementById('musicTitle').textContent = t.title;
+    document.getElementById('musicComposer').textContent = t.composer;
     document.getElementById('musicProgress').style.width = '0%';
   }
 
@@ -499,7 +504,7 @@
     var p = document.getElementById('musicPlayer');
     var btn = document.getElementById('collapseBtn');
     p.classList.toggle('collapsed');
-    btn.textContent = p.classList.contains('collapsed') ? '▸' : '▾';
+    btn.textContent = p.classList.contains('collapsed') ? '♪' : '✕';
   }
   </script>
 
